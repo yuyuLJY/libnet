@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
 	libnet_ptag_t lib_t = 0;
 	unsigned char src_mac[6] = {0x00,0x0c,0x29,0x29,0x29,0x50};
 	unsigned char dst_mac[6] = {0x58,0xfb,0x84,0x0b,0xea,0x8c};
-    char *src_ip_str = "192.168.126.132"; //源主机IP地址
-    char *dst_ip_str = "172.20.54.190"; //目的主机IP地址
+        char *src_ip_str = "192.168.126.132"; //源主机IP地址
+        char *dst_ip_str = "172.20.54.190"; //目的主机IP地址
 	unsigned long src_ip,dst_ip = 0;
  
 	lens = sprintf(send_msg, "%s", "this is for the udp test");
@@ -32,47 +32,44 @@ int main(int argc, char *argv[])
 	lib_t = libnet_build_tcp(	//tcp
 		56923,//source port 56928
 		443,//destination port 443
-		//0x18,0xad,0x15,0x5f,//sequence number(32 bit),
-		//0x5d,0xba,0x5d,0x36,//acknowledfement number
-413996383,
-1572494646,
-0,//control
-42,//window size value
-52774,//checksum
-0,//urgent pointer
-1000,//flag
-
-								send_msg,
-								lens,
-								lib_net,
-								0
-							);
+                413996383,//0x18,0xad,0x15,0x5f,//sequence number(32 bit),
+                1572494646,//0x5d,0xba,0x5d,0x36,//acknowledfement number
+                0,//control
+                42,//window size value
+                52774,//checksum
+                0,//urgent pointer
+                1000,//flag
+		send_msg,
+		lens,
+		lib_net,
+		0
+	);
  
 	lib_t = libnet_build_ipv4(	//ip
-								20+8+lens,
-								0,
-								500,
-								0,
-								10,
-								17,
-								0,
-								src_ip,
-								dst_ip,
-								NULL,
-								0,
-								lib_net,
-								0
-							);
+		20+8+lens,//len
+		0,//service type
+		500,//id
+		0,//falg
+		10,//ttl
+	        17,//prot
+		0,//sum
+		src_ip,//source ip 
+		dst_ip,//dest ip
+		NULL,//load
+		0,//the length of load
+		lib_net,//句柄
+		0//协议标记
+	);
  
 	lib_t = libnet_build_ethernet(	//mac
-									(u_int8_t *)dst_mac,
-									(u_int8_t *)src_mac,
-									0x800, 
-									NULL,
-									0,
-									lib_net,
-									0
-								);
+		(u_int8_t *)dst_mac,
+		(u_int8_t *)src_mac,
+		0x800, //type
+		NULL,//load
+	        0,//the length of load
+		lib_net,//句柄
+		0//协议标记
+	);
 	int res = 0;
 	res = libnet_write(lib_net);	//发送数据包
 	if(-1 == res)
